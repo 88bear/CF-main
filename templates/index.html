@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>個人化推薦系統</title>
+  <!--<link rel="stylesheet" href="styles.css"> -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <!-- 背景音樂，隱藏 controls，並設定自動播放與循環 -->
+    <audio id="background-music" src="{{ url_for('static', filename='music/background.mp3') }}" autoplay loop style="display: none;"></audio>
+    <h1>個人化推薦系統</h1>
+    <p>請依序選擇您的偏好設定</p>
+  </header>
+
+  <main>
+    <!-- 洗牌動畫容器 -->
+    <div id="card-shuffle-container" class="hidden">
+      <div class="shuffle-animation">
+        <div class="card-deck"></div>
+      </div>
+    </div>
+
+    <div id="intro-modal" class="modal">
+      <div class="modal-content">
+        <span id="close-modal" class="close-button">&times;</span>
+        <h2>歡迎來到今日占卜</h2>
+        <p>在這次體驗中，你將進行三次洗牌：</p>
+        <ul>
+          <li>選擇御守時一次</li>
+          <li>選擇身份時一次</li>
+          <li>抽卡前再一次</li>
+          <li>最後抽出一張專屬於你的塔羅牌</li>
+        </ul>
+        <p>請依序選擇御守與身份，並依指示操作。</p>
+      </div>
+    </div>
+
+    <!-- 1. 御守選擇 (以圖片方式) -->
+    <section id="omamori-section">
+      <h2>1. 選擇御守</h2>
+      <div id="omamori-list">
+        <div class="omamori-item" data-value="goukaku">
+          <img src="{{ url_for('static', filename='images/omamori/goukaku.jpg') }}" alt="合格守">
+          <p>合格守</p>
+        </div>
+        <div class="omamori-item" data-value="koutsuu">
+          <img src="{{ url_for('static', filename='images/omamori/koutsuu.jpg') }}" alt="交通安全守">
+          <p>交通安全守</p>
+        </div>
+        <div class="omamori-item" data-value="anzan">
+          <img src="{{ url_for('static', filename='images/omamori/anzan.jpg') }}" alt="安產守">
+          <p>安產守</p>
+        </div>
+        <div class="omamori-item" data-value="shigyou">
+          <img src="{{ url_for('static', filename='images/omamori/shigyou.jpg') }}" alt="事業守">
+          <p>事業守</p>
+        </div>
+        <div class="omamori-item" data-value="byouki">
+          <img src="{{ url_for('static', filename='images/omamori/byouki.jpg') }}" alt="病気平癒守">
+          <p>病気平癒守</p>
+        </div>
+        <div class="omamori-item" data-value="kenkou">
+          <img src="{{ url_for('static', filename='images/omamori/kenkou.jpg') }}" alt="健康守">
+          <p>健康守</p>
+        </div>
+        <div class="omamori-item" data-value="musubi_hanryo">
+          <img src="{{ url_for('static', filename='images/omamori/musubi_hanryo.jpg') }}" alt="結緣守-伴侶">
+          <p>結緣守-伴侶</p>
+        </div>
+        <div class="omamori-item" data-value="musubi_enbun">
+          <img src="{{ url_for('static', filename='images/omamori/musubi_enbun.jpg') }}" alt="結緣守-緣分">
+          <p>結緣守-緣分</p>
+        </div>
+        <div class="omamori-item" data-value="kaiun1">
+          <img src="{{ url_for('static', filename='images/omamori/kaiun.jpg') }}" alt="開運除惡守1">
+          <p>開運除惡守1</p>
+        </div>
+        <div class="omamori-item" data-value="kaiun2">
+          <img src="{{ url_for('static', filename='images/omamori/kaiun1.jpg') }}" alt="開運除惡守2">
+          <p>開運除惡守2</p>
+        </div>
+        <div class="omamori-item" data-value="ichou_chouju">
+          <img src="{{ url_for('static', filename='images/omamori/ichou_chouju.jpg') }}" alt="銀杏守-長壽">
+          <p>銀杏守-長壽</p>
+        </div>
+        <div class="omamori-item" data-value="gakugyou_choukyuu">
+          <img src="{{ url_for('static', filename='images/omamori/gakugyou_choukyuu.jpg') }}" alt="學業守-長久">
+          <p>學業守-長久</p>
+        </div>
+        <div class="omamori-item" data-value="gakugyou_tairyoku">
+          <img src="{{ url_for('static', filename='images/omamori/gakugyou_tairyoku.jpg') }}" alt="學業守-耐力">
+          <p>學業守-耐力</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 身份選擇 (以圖片方式) -->
+    <section id="identity-section">
+      <h2>2. 選擇身份</h2>
+      <div id="identity-list">
+		<div class="identity-item" data-value="student,m">
+          <img src="{{ url_for('static', filename='images/identities/student_m.jpg') }}" alt="學生(男)">
+          <p>學生（男）</p>
+        </div>
+        <div class="identity-item" data-value="student,f">
+          <img src="{{ url_for('static', filename='images/identities/student_f.jpg') }}" alt="學生(女)">
+          <p>學生（女）</p>
+        </div>
+        <div class="identity-item" data-value="white_collar,m">
+          <img src="{{ url_for('static', filename='images/identities/white_collar_m.jpg') }}" alt="白領(男)">
+          <p>白領（男）</p>
+        </div>
+        <div class="identity-item" data-value="white_collar,f">
+          <img src="{{ url_for('static', filename='images/identities/white_collar_f.jpg') }}" alt="白領(女)">
+          <p>白領（女）</p>
+        </div>
+        <div class="identity-item" data-value="blue_collar,m">
+          <img src="{{ url_for('static', filename='images/identities/blue_collar_m.jpg') }}" alt="藍領(男)">
+          <p>藍領（男）</p>
+        </div>
+        <div class="identity-item" data-value="blue_collar,f">
+          <img src="{{ url_for('static', filename='images/identities/blue_collar_f.jpg') }}" alt="藍領(女)">
+          <p>藍領（女）</p>
+        </div>
+        <div class="identity-item" data-value="elderly,m">
+          <img src="{{ url_for('static', filename='images/identities/elderly_m.jpg') }}" alt="老人(男)">
+          <p>老人（男）</p>
+        </div>
+        <div class="identity-item" data-value="elderly,f">
+          <img src="{{ url_for('static', filename='images/identities/elderly_f.jpg') }}" alt="老人(女)">
+          <p>老人（女）</p>
+        </div>
+        <div class="identity-item" data-value="household,m">
+          <img src="{{ url_for('static', filename='images/identities/household_m.jpg') }}" alt="家庭主夫">
+          <p>家庭主夫</p>
+        </div>
+        <div class="identity-item" data-value="household,f">
+          <img src="{{ url_for('static', filename='images/identities/household_f.jpg') }}" alt="家庭主婦">
+          <p>家庭主婦</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 抽卡功能 -->
+    <section id="card-section">
+      <h2>3. 抽取一張牌</h2>
+      <button id="draw-cards">抽卡</button>
+      <div id="card-result">
+        <!-- 卡片顯示區 -->
+      </div>
+    </section>
+
+    <!-- 提交與推薦結果 -->
+    <section id="submit-section">
+      <button id="submit">提交並產生推薦</button>
+    </section>
+
+    <!-- 5. 生成圖片區塊 -->
+    <section id="generate-image-section">
+      <h2>推薦結果</h2>
+      <p id="status"></p>
+      <img id="resultImage" alt="生成結果圖片" style="max-width: 100%; margin-top: 1em;">
+    </section>
+
+    <section id="result-section">
+      <div id="result"></div>
+    </section>
+
+    <!-- 4. SAM情緒評估 -->
+    <section id="sam-section" class="hidden">
+      <h2>請評估您目前的情緒狀態</h2>
+      
+      <div class="sam-dimension">
+        <h3>愉悅度 (Valence)</h3>
+        <p>您當前感受到的愉悅/不愉悅程度</p>
+        <div class="sam-options" id="valence-options">
+          <div class="sam-option" data-value="1">
+            <img src="{{ url_for('static', filename='images/SAM/valence1.png') }}" alt="非常不愉悅">
+            <p>1 - 非常不愉悅</p>
+          </div>
+          <div class="sam-option" data-value="2">
+            <img src="{{ url_for('static', filename='images/SAM/valence2.png') }}" alt="有點不愉悅">
+            <p>2 - 有點不愉悅</p>
+          </div>
+          <div class="sam-option" data-value="3">
+            <img src="{{ url_for('static', filename='images/SAM/valence3.png') }}" alt="中性">
+            <p>3 - 中性</p>
+          </div>
+          <div class="sam-option" data-value="4">
+            <img src="{{ url_for('static', filename='images/SAM/valence4.png') }}" alt="有點愉悅">
+            <p>4 - 有點愉悅</p>
+          </div>
+          <div class="sam-option" data-value="5">
+            <img src="{{ url_for('static', filename='images/SAM/valence5.png') }}" alt="非常愉悅">
+            <p>5 - 非常愉悅</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sam-dimension">
+        <h3>喚起度 (Arousal)</h3>
+        <p>您當前感受到的興奮/平靜程度</p>
+        <div class="sam-options" id="arousal-options">
+          <div class="sam-option" data-value="1">
+            <img src="{{ url_for('static', filename='images/SAM/arousal1.png') }}" alt="非常平靜">
+            <p>1 - 非常平靜</p>
+          </div>
+          <div class="sam-option" data-value="2">
+            <img src="{{ url_for('static', filename='images/SAM/arousal2.png') }}" alt="有點平靜">
+            <p>2 - 有點平靜</p>
+          </div>
+          <div class="sam-option" data-value="3">
+            <img src="{{ url_for('static', filename='images/SAM/arousal3.png') }}" alt="中等">
+            <p>3 - 中等</p>
+          </div>
+          <div class="sam-option" data-value="4">
+            <img src="{{ url_for('static', filename='images/SAM/arousal4.png') }}" alt="有點興奮">
+            <p>4 - 有點興奮</p>
+          </div>
+          <div class="sam-option" data-value="5">
+            <img src="{{ url_for('static', filename='images/SAM/arousal5.png') }}" alt="非常興奮">
+            <p>5 - 非常興奮</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sam-dimension">
+        <h3>主導感 (Dominance)</h3>
+        <p>您當前感受到的控制/被控制程度</p>
+        <div class="sam-options" id="dominance-options">
+          <div class="sam-option" data-value="1">
+            <img src="{{ url_for('static', filename='images/SAM/dominance1.png') }}" alt="完全不受控制">
+            <p>1 - 完全不受控制</p>
+          </div>
+          <div class="sam-option" data-value="2">
+            <img src="{{ url_for('static', filename='images/SAM/dominance2.png') }}" alt="有點不受控制">
+            <p>2 - 有點不受控制</p>
+          </div>
+          <div class="sam-option" data-value="3">
+            <img src="{{ url_for('static', filename='images/SAM/dominance3.png') }}" alt="中等">
+            <p>3 - 中等</p>
+          </div>
+          <div class="sam-option" data-value="4">
+            <img src="{{ url_for('static', filename='images/SAM/dominance4.png') }}" alt="有點控制">
+            <p>4 - 有點控制</p>
+          </div>
+          <div class="sam-option" data-value="5">
+            <img src="{{ url_for('static', filename='images/SAM/dominance5.png') }}" alt="完全控制">
+            <p>5 - 完全控制</p>
+          </div>
+        </div>
+      </div>
+      
+      <button id="submit-sam">提交情緒評估</button>
+    </section>
+
+  </main>
+
+  <script src="{{ url_for('static', filename='generate.js') }}"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>  
+</body>
+</html>
